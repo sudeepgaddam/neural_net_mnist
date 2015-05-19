@@ -154,22 +154,22 @@ Container<Label> read_mnist_label_file(const std::string& path, std::size_t limi
 
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t>
 Container<Sub<Pixel>> read_training_images(std::size_t limit = 0){
-    return read_mnist_image_file<Container,Sub,Pixel>("mnist/train-images-idx3-ubyte", limit);
+    return read_mnist_image_file<Container,Sub,Pixel>("train-images-idx3-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t>
 Container<Sub<Pixel>> read_test_images(std::size_t limit = 0){
-    return read_mnist_image_file<Container,Sub,Pixel>("mnist/t10k-images-idx3-ubyte", limit);
+    return read_mnist_image_file<Container,Sub,Pixel>("t10k-images-idx3-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, typename Label = uint8_t>
 Container<Label> read_training_labels(std::size_t limit = 0){
-    return read_mnist_label_file<Container, Label>("mnist/train-labels-idx1-ubyte", limit);
+    return read_mnist_label_file<Container, Label>("train-labels-idx1-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, typename Label = uint8_t>
 Container<Label> read_test_labels(std::size_t limit = 0){
-    return read_mnist_label_file<Container, Label>("mnist/t10k-labels-idx1-ubyte", limit);
+    return read_mnist_label_file<Container, Label>("t10k-labels-idx1-ubyte", limit);
 }
 
 template<template<typename...> class Container = std::vector, template<typename...> class Sub = std::vector, typename Pixel = uint8_t, typename Label = uint8_t>
