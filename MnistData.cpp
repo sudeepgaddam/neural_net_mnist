@@ -199,6 +199,15 @@ void MnistData::getPixels(bool training, int img_id, vector<Pixel>& input){
 	} else {
 		input = test_images[img_id];
 	}
+	for (auto &a : input) {
+		if (a>0) {
+			
+			a=100000.0; 
+			
+		} else {
+			a= 0.0;
+		}
+	}
 }
 int MnistData::getLabel(bool training, int j){
 	if (training) {

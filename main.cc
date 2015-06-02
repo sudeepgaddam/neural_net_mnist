@@ -45,22 +45,27 @@ int process_data(bool training, NeuralNet& nn, double bias, MnistData &mnistdata
           correct++;
         }
       } else {
-        nn.backPropagate(outputs, label);
-      }
-    
-  }
+		             
+		//nn.print();
 
+        nn.backPropagate(outputs, label);
+		//nn.print();
+
+      }
+      	
+  }
   delete outputs;
   return correct;
 }
 
 
 int main(int argc, char *argv[]) {
+ //srand((unsigned)time(NULL));
 	MnistData mnistdata(100000, 100000);
 	//mnistdata.printTrainingLabels();
 	 int training = 0, layers = 2, testing = 0;
-  double bias = 0, responseThreshold = 1, learningRate = 1;
-  int layerHeight = 100;
+  double bias = 100.0, responseThreshold = 2, learningRate = 5.0;
+  int layerHeight = 10;
 	
 	  NeuralNet nn(mnistdata.getRows()*mnistdata.getColoumns(),
                ALPHABET_SIZE,

@@ -6,16 +6,17 @@
 class Layer {
 private:
   int numNeurons;
+  double bias;
   std::vector<Neuron*>* neurons;
 
 public:
   Layer() {}
 
   // Create the vector of neurons for this layer.
-  Layer(int neuronCount, int inputsPerNeuron) {
+  Layer(int neuronCount, int inputsPerNeuron, double bias) {
     numNeurons = neuronCount;
     neurons = new std::vector<Neuron*>(numNeurons);
-
+	bias = bias;
     for (int i = 0; i < neuronCount; i++) {
       (*neurons)[i] = new Neuron(inputsPerNeuron);
     }

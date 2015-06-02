@@ -9,7 +9,7 @@
 
 #define Container std::vector
 #define Sub std::vector
-#define Pixel  uint8_t
+#define Pixel  double
 #define Label  uint8_t
 
 

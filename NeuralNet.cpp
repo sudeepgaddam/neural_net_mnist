@@ -18,16 +18,24 @@ NeuralNet::NeuralNet(int inputs,
   numOutputs = outputs;
   numHiddenLayers = hiddenLayers;
   numNeuronsPerLayer = neuronsPerLayer;
+    std::vector<double> bias_array;
+  bias_array.reserve(hiddenLayers+1);
   learningRate = alpha;
   responseThreshold = threshold;
   layers = new vector<Layer*>(hiddenLayers + 2);
-
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator (seed);
+	double mean =0.0;
+    std::normal_distribution<double> distribution (0.0,1.0);
+    for (auto &a : bias_array) {
+		a = distribution(generator);
+	}
   // Initialize each hidden layer.
-  (*layers)[0] = new Layer(inputs, 0);
-  (*layers)[1] = new Layer(neuronsPerLayer, inputs);
-  (*layers)[hiddenLayers + 1] = new Layer(outputs, neuronsPerLayer);
+  (*layers)[0] = new Layer(inputs, 0, bias_array[0]);
+  (*layers)[1] = new Layer(neuronsPerLayer, inputs, bias_array[1]);
+  (*layers)[hiddenLayers + 1] = new Layer(outputs, neuronsPerLayer, 0.0);
   for (int i = 2; i < layers->size() - 1; i++) {
-    (*layers)[i] = new Layer(neuronsPerLayer, neuronsPerLayer);
+    (*layers)[i] = new Layer(neuronsPerLayer, neuronsPerLayer, bias_array[i]);
   }
 }
 
@@ -45,6 +53,7 @@ void NeuralNet::feedForward(vector<Pixel>& inputs,
   Layer* inputLayer = (*layers)[0];
   for (int i = 0; i < inputLayer->neuronCount(); i++) {
     inputLayer->getNeuron(i)->setValue(static_cast<double>(inputs[i]));
+    inputLayer->getNeuron(i)->setActivation(0);
   }
   for (int l = 1; l < numHiddenLayers + 2; l++) {
     Layer *curr = (*layers)[l], *upstream = (*layers)[l-1];
@@ -55,6 +64,7 @@ void NeuralNet::feedForward(vector<Pixel>& inputs,
         sum += n->getWeight(i) * upstream->getNeuron(i)->getValue();
       }
       n->setActivation(sum);
+      //cout << " Sum: " << sum << " sigmoid(sum) " << sigmoid(sum);
       n->setValue(sigmoid(sum));
     }
   }
@@ -62,11 +72,13 @@ void NeuralNet::feedForward(vector<Pixel>& inputs,
   Layer* lastLayer = (*layers)[numHiddenLayers+1];
   for (int i = 0; i < lastLayer->neuronCount(); i++) {
     (*outputLayer)[i] = lastLayer->getNeuron(i)->getValue();
+   // cout << " value:" << lastLayer->getNeuron(i)->getValue();
   }
 }
 
 // Back propagate the errors to update the weights.
 void NeuralNet::backPropagate(vector<double>* outputs, int teacher) {
+	//cout << "teacher" << teacher << endl;
   Layer *outputLayer = (*layers)[numHiddenLayers + 1];
   for (int i = 0; i < outputs->size(); i++) {
     Neuron *n = outputLayer->getNeuron(i);
@@ -89,6 +101,7 @@ void NeuralNet::backPropagate(vector<double>* outputs, int teacher) {
             * downstream->getNeuron(j)->getDelta();
       }
       n->setDelta(sigmoidPrime(n->getActivation()) * sum);
+      //cout << " Delta: " << n->getDelta() << "for layer#" << l << "neuron: " << i <<endl; 
       for (int j = 0; j < downstream->neuronCount(); j++) {
         downstream->getNeuron(j)->updateWeight(i,
             learningRate * sigmoid(n->getActivation())
@@ -105,6 +118,5 @@ inline double NeuralNet::sigmoid(double activation) {
 
 // Compute the derivative of the sigmoid function
 inline double NeuralNet::sigmoidPrime(double activation) {
-  double exponential = exp(activation / responseThreshold);
-  return exponential / (responseThreshold * pow(exponential + 1, 2));
+  return (sigmoid(activation)*(1-sigmoid(activation)));
 }

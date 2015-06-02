@@ -40,9 +40,14 @@ public:
   inline double sigmoidPrime(double activation);
 
   void print() {
+	  //Print values of layer 0 neurons
+	        std::cout << "Layerr #0"   << "\n";
+	//(*layers)[0]->printNeurons();
+	
     for (int i = 1; i < layers->size(); i++) {
       std::cout << "Layerr #" << i << "\n";
       (*layers)[i]->printNeurons();
     }
+    
   }
 };
